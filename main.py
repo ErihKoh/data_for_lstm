@@ -1,9 +1,9 @@
 import tensorflow as tf
 
-from data_for_lstm.data_preprocecing import create_sequences, create_data, train_and_test
-from data_for_lstm.live_forecast import live_forecast
-from data_for_lstm.train_lstm import train_lstm
-from data_for_lstm.visualization import visualization
+from data_preprocecing import create_data, create_sequences, train_and_test
+from live_forecast import live_forecast
+from train_lstm import train_lstm
+from visualization import visualization
 
 
 def main():
