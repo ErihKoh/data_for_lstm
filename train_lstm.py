@@ -1,16 +1,21 @@
 from sklearn.metrics import mean_absolute_error, mean_squared_error
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import LSTM, Dense
+from tensorflow.keras.layers import LSTM, Dense, Dropout
+from tensorflow.keras.optimizers import Adam
 import numpy as np
 import joblib
 
 
-def train_lstm(X_train, y_train, X_test, y_test, scaler, epochs=50, batch_size=32):
-    model = Sequential()
-    model.add(LSTM(64, return_sequences=False, input_shape=(X_train.shape[1], X_train.shape[2])))
-    model.add(Dense(1))
+def train_lstm(X_train, y_train, X_test, y_test, scaler, epochs=20, batch_size=16):
 
-    model.compile(optimizer='adam', loss='mse')
+    model = Sequential()
+    model.add(LSTM(units=128, return_sequences=True, input_shape=(X_train.shape[1], X_train.shape[2])))
+    model.add(LSTM(units=64, return_sequences=False))
+    model.add(Dropout(0.2))  # опціонально
+    model.add(Dense(units=1))  # прогноз одного значення (напр. ціна)
+
+    model.compile(optimizer=Adam(learning_rate=0.001), loss='mse', metrics=['mae'])
+
     history = model.fit(X_train, y_train, epochs=epochs, batch_size=batch_size,
                         validation_data=(X_test, y_test), verbose=1)
 
@@ -27,8 +32,8 @@ def train_lstm(X_train, y_train, X_test, y_test, scaler, epochs=50, batch_size=3
 
     # Метрики
     mae = mean_absolute_error(y_test_real, y_pred_real)
-    rmse = mean_squared_error(y_test_real, y_pred_real)
-    print(f"\n📊 MAE: {mae:.5f}, RMSE: {rmse:.5f}")
+
+    print(f"\n📊 MAE: {mae:.5f}")
 
     model.save("model.keras")
     joblib.dump(scaler, "scaler.save")

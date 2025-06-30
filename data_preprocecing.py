@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import StandardScaler
 
 
 def calculate_rsi(df: pd.DataFrame, column: str = "Close", period: int = 14) -> pd.Series:
@@ -53,7 +53,7 @@ def create_data():
     data = df[features].values
 
     # Масштабування
-    scaler = MinMaxScaler()
+    scaler = StandardScaler()
 
     scaled_data = scaler.fit_transform(data)
     return scaled_data, scaler, df
@@ -74,6 +74,9 @@ def train_and_test(x, y):
     X_train, X_test = x[:split], x[split:]
     y_train, y_test = y[:split], y[split:]
     return X_train, X_test, y_train, y_test
+
+
+
 
 
 
